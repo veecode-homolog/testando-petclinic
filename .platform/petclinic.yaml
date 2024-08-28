@@ -8,7 +8,7 @@ metadata:
     grafana/dashboard-selector: "testando-petclinic-petclinic"
     grafana/alert-label-selector: "alertname=testando-petclinic-petclinic"
     kong-manager/service-name: vkpr.testando-petclinic-petclinic.80                   
-    kong-manager/instance: /kong-manager/api
+    kong-manager/instance: /kong-manager/homolog-minimal-otlp
 spec:
   type: service
   lifecycle: experimental
