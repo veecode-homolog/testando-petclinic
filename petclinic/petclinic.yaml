@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: testando-petclinic-petclinic
+  namespace: vkpr
+  labels:
+    backstage.io/kubernetes-id: testando-petclinic-petclinic
+spec:
+  selector:
+    app: testando-petclinic-petclinic
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    meta.helm.sh/release-namespace: vkpr
+  labels:
+    backstage.io/kubernetes-id: testando-petclinic-petclinic
+  name: testando-petclinic-petclinic
+  namespace: vkpr
+spec:
+  ingressClassName: kong
+  rules:
+  - host: petclinic.homolog-minimal-otlp.vkpr.platform.vee.codes
+    http:
+      paths:
+      - backend:
+          service:
+            name: testando-petclinic-petclinic
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testando-petclinic-petclinic
+  labels:
+    backstage.io/kubernetes-id: testando-petclinic-petclinic
+spec:
+  selector:
+    matchLabels:
+      app: testando-petclinic-petclinic
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: testando-petclinic-petclinic
+        backstage.io/kubernetes-id: testando-petclinic-petclinic
+      annotations:
+        sidecar.opentelemetry.io/inject: "true"
+        instrumentation.opentelemetry.io/inject-java: "true"
+    spec:
+      containers:
+      - name: app
+        image: ghcr.io/pavolloffay/spring-petclinic:latest
